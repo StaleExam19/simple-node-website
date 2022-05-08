@@ -1,14 +1,12 @@
 const http = require("http");
 const fs = require("fs");
 const stream = require("stream");
-const path = require("path");
 
 const possibleRoute = [
     { route: "/", page: "./static/index.html" },
     { route: "/about", page: "./static/about.html" },
     { route: "/contact", page: "./static/contact-me.html" }
 ];
-
 
 /**
  * @param {string} page
@@ -21,6 +19,7 @@ function loadPage(page, res) {
     });
 }
 
+
 /**
  * @param {http.IncomingMessage} req 
  * @param {http.ServerResponse} res 
@@ -28,23 +27,13 @@ function loadPage(page, res) {
 function getRequestHandle(req, res) {
     const route = req.url;
     const pathFound = possibleRoute.find((val) => val.route === route);
-    const extname = path.extname(req.url);
 
-    if (pathFound || extname !== "") extname !== "" ? loadPage(`./static/${route}`, res)
-        : loadPage(pathFound.page, res);
-
+    if (pathFound) loadPage(pathFound.page, res);
     else loadPage("./static/404.html", res);
 }
 
-/**
- * @param {http.ServerResponse} res 
- */
-const redirect = (res) =>
-    res.writeHead(302, { "Location": "/" });
 
 const server = http.createServer((req, res) => {
-    const route = req.url;
-
     if (req.method === "GET") getRequestHandle(req, res);
 
     else if (req.method === "POST") {
